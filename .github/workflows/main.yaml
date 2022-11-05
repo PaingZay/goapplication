@@ -1,0 +1,85 @@
+name: Release and deploy Todo
+
+on:
+  push:
+    branches:
+    - "v[0-9]+.[0-9]+"
+
+jobs:
+  release-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Echo the branch name
+      run: echo "current branch - ${{ github.ref_name }}"
+    - name: Checkout the branch
+      uses: actions/checkout@v3
+      with:
+       ref: ${{ github.ref_name }}
+
+    - name: Hello
+      run: railway up
+      env:
+        RAILWAY_TOKEN: ${{ secrets.PAINGZAY }}
+    - name: Send custom JSON data to Slack workflow
+      id: slack
+      uses: slackapi/slack-github-action@v1.23.0
+      with:
+        payload: |
+          {
+            "blocks": [
+              {
+                "type": "header",
+                "text": {
+                  "type": "plain_text",
+                  "text": "DipSA55 CI/CD Assignment Submission",
+                  "emoji": true
+                }
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "Name:\nPaing Zay"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "Metriculation:\nA0265083A"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "Email:\npyne469@gmail.com"
+                  },
+                  {
+                    "type": "mrkdwn",
+                    "text": "Repository:\nhttps://github.com/PaingZay/goapplication"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "fields": [
+                  {
+                    "type": "mrkdwn",
+                    "text": "Deployment:\nhttps://loved-soda-production.up.railway.app"
+                  }
+                ]
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "<https://loved-soda-production.up.railway.app/|Open Application>"
+                }
+              }
+            ]
+          }
+  
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK

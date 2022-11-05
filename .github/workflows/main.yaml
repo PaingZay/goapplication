@@ -8,14 +8,23 @@ on:
 jobs:
   release-and-deploy:
     runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, '#NORUN')"
     steps:
-    - name: Echo the branch name
+    - name: my branch
       run: echo "current branch - ${{ github.ref_name }}"
     - name: Checkout the branch
       uses: actions/checkout@v3
       with:
        ref: ${{ github.ref_name }}
-
+    - name: increase release version
+      uses: aurestic/incrementarl-create-release@master
+      with:
+        flag_branch: true
+        message: Bump version
+        prev_tag: 'PZ'
+        update_odoo_module_version: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: installing railway
       run: npm i -g @railway/cli
 
@@ -23,7 +32,7 @@ jobs:
       run: railway up
       env:
         RAILWAY_TOKEN: ${{ secrets.PAINGZAY }}
-    - name: Send custom JSON data to Slack workflow
+    - name: Notify Slack
       id: slack
       uses: slackapi/slack-github-action@v1.23.0
       with:

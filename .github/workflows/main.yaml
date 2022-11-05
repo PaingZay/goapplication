@@ -16,6 +16,9 @@ jobs:
       with:
        ref: ${{ github.ref_name }}
 
+    - name: installing railway
+      run: npm i -g @railway/cli
+
     - name: Hello
       run: railway up
       env:
@@ -81,5 +84,5 @@ jobs:
           }
   
       env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        SLACK_WEBHOOK_URL: ${{ secrets.DIO_BRANDO }}
         SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
